@@ -1,0 +1,13 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+wikidataintegrator = "0.8.4"
+sparqlwrapper = "1.8.5"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
