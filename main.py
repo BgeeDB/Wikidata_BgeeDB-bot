@@ -182,6 +182,7 @@ if __name__ == '__main__':
     ensembl2wikidata_id_map = ensembl2wikidata_pandas.groupby('ens_gene_id').agg(
         {'wikidata_gene_id': lambda x: list(x)}).to_dict()['wikidata_gene_id']
     #Query Bgee to get gene expression calls
+    #It is limited to ~1.000.000 entries
     gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
                                                                            BGEE_EXPRESSION_QUERY_HUMAN_UBERON_PREFIXED,
                                                                           column_datatype={'uberon_id': np.str})
@@ -227,5 +228,9 @@ if __name__ == '__main__':
             run_one(wd_expressed_in_dict, login)
         count = count + 1
         printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
-    with open("inserted_statements.csv", "a") as processed_file:
-        processed_file.write(added_statements.getvalue())
+        with open("inserted_statements.csv", "a") as processed_file:
+            processed_file.write(added_statements.getvalue())
+            added_statements.close()
+            added_statements = io.StringIO()
+        with open("count.tmp", "w") as count_file:
+            count_file.write(count)

@@ -17,3 +17,5 @@ bgee_v14_2_9606.csv
 ens2wikidata_ids.csv
 inserted_statements.csv
 *bckp.csv
+*_remove
+test.py

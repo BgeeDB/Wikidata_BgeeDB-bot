@@ -11,8 +11,8 @@ class InputCSVDataDAO:
 
     @staticmethod
     def get_results_as_pandas_parser(sparql_endpoint: str = None, sparql_query: str = None,
-                                     csv_file_path: PathLike = None, column_datatype: dict = None) ->\
-            Union[TextFileReader, Series, DataFrame, None]:
+                                     csv_file_path: PathLike = None, column_datatype: dict = None, separator : str = ','
+                                     ) ->  Union[TextFileReader, Series, DataFrame, None]:
         """This method convert either a SPARQL query response or a CSV file into a pandas object.
 
         :param sparql_endpoint: the SPARQL endpoint URL. It should support CSV response.
@@ -31,7 +31,7 @@ class InputCSVDataDAO:
                 results = csv_file_path
             else:
                 raise ValueError("Values must be set for either sparql-related or file path parameters.")
-        csv_result_panda = pd.read_csv(results, sep=',', low_memory=False, dtype=column_datatype)
+        csv_result_panda = pd.read_csv(results, sep=separator, low_memory=False, dtype=column_datatype)
         return csv_result_panda
 
     @staticmethod

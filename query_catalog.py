@@ -35,22 +35,26 @@ prefix dct: <http://purl.org/dc/terms/>
 PREFIX lscr: <http://purl.org/lscr#>
 
 
-SELECT ?gene_id ?uberon_id ?gene_ensembl_uri ?anatomical_entity ?max_score {
+SELECT ?gene_id ?uberon_id  {
+#values ?seq {<http://omabrowser.org/ontology/oma#GENE_ENSG00000237468>
+#<http://omabrowser.org/ontology/oma#GENE_ENSG00000237467>}
  ?seq a orth:Gene .
  ?seq orth:organism <http://bgee.org/#ORGANISM_9606>.
  ?seq dct:identifier ?gene_id.
  ?seq lscr:xrefEnsemblGene ?gene_ensembl_uri
 {SELECT DISTINCT ?seq ?anatomical_entity STRAFTER(str(?anatomical_entity), "UBERON_" ) as ?uberon_id (MAX(?score) as ?max_score) {
-     ?exp    genex:hasSequenceUnit ?seq.
+    ?exp a genex:Expression.
+    ?exp    genex:hasSequenceUnit ?seq.
     ?exp genex:hasExpressionCondition ?cond .
     ?cond genex:hasAnatomicalEntity ?anatomical_entity .
     ?exp genex:hasExpressionLevel ?score.
     ?anatomical_entity rdfs:label ?anatName .
     ?cond obo:RO_0002162 <http://purl.uniprot.org/taxonomy/9606> .
 
-}group by ?seq ?anatomical_entity order by desc(?max_score) }
+}group by ?seq ?anatomical_entity }
 filter (?uberon_id !='')
-}'''
+} order by ?gene_id, desc(?max_score) '''
+#limit 400080 offset 30109
 WIKIDATA2ENSEMBL_GENE_ID_MAP_QUERY = '''
 ######
 ## Wikidata SPARQL query to compose a mapping between wikidata ids and Ensembl gene ids.
