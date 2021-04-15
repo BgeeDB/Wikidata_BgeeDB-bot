@@ -189,7 +189,7 @@ if __name__ == '__main__':
     #                                                                       BGEE_EXPRESSION_QUERY_HUMAN_UBERON_PREFIXED,
     #                                                                      column_datatype={'uberon_id': np.str})
     #Get gene expression cals from a CSV file.
-    gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path="wikidata_bgeev14_2.csv",
+    gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path=INPUT_BGEE_DATA_TSV,
                                                                           column_datatype={'uberon_id': np.str},
                                                                           separator='\t')
     #limit by group of 10 the bgee expression calls for each gene
