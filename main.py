@@ -6,6 +6,8 @@ from wikidataintegrator import wdi_core, wdi_login, wdi_helpers
 from config import *
 from query_catalog import *
 from input_data_preprocessing import InputCSVDataDAO, np
+import time
+from os import path
 
 #Wikidata RDF properties considered
 PROPS = {
@@ -183,12 +185,13 @@ if __name__ == '__main__':
         {'wikidata_gene_id': lambda x: list(x)}).to_dict()['wikidata_gene_id']
     #Query Bgee to get gene expression calls
     #It is limited to ~1.000.000 entries
-    gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
-                                                                           BGEE_EXPRESSION_QUERY_HUMAN_UBERON_PREFIXED,
-                                                                          column_datatype={'uberon_id': np.str})
-    #Get gene expression cals from a CSV file.
-    #gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path="bgee_9606_test_set.csv",
+    #gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
+    #                                                                       BGEE_EXPRESSION_QUERY_HUMAN_UBERON_PREFIXED,
     #                                                                      column_datatype={'uberon_id': np.str})
+    #Get gene expression cals from a CSV file.
+    gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path="wikidata_bgeev14_2.csv",
+                                                                          column_datatype={'uberon_id': np.str},
+                                                                          separator='\t')
     #limit by group of 10 the bgee expression calls for each gene
     expressed_in_dict = InputCSVDataDAO.get_limited_results_grouped_by_column_dict(
         gene_expression_file, "gene_id", "uberon_id")
@@ -199,38 +202,48 @@ if __name__ == '__main__':
     added_statements.write(heading)
     total = len(expressed_in_dict.items())
     printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
+    if path.exists("count.tmp"):
+        with open("count.tmp", "r") as count_file:
+            START_INDEX = int(count_file.readline())
+        if START_INDEX >= total:
+            print("All entries were already processed. To redo it, delete the file count.tmp in the current directory.")
     #Add bgee expression call statements to wikidata
     for ens_id, uberon_ids in expressed_in_dict.items():
-        wikidata_organ_list = []
-        wikidata_gene_list = []
-        if ens_id in ens_wiki_list:
-            wikidata_gene_list = ensembl2wikidata_id_map[ens_id]
-            for uberon_id in uberon_ids:
-                if uberon_id in uberon_wiki_list:
-                    wikidata_organ_id = uberon2wikidata_id_map[uberon_id]
-                    wikidata_organ_list.append(wikidata_organ_id)
-                    added_statements.write(ens_id + "," + uberon_id + "," + str(wikidata_gene_list) + \
-                                           "," + wikidata_organ_id + "\n")
-                else:
-                    if uberon_id not in uberon_wiki_list:
-                        # if a corresponding uberon item doesn't exist in wikidata, log it and skip
-                        msg = wdi_helpers.format_msg(uberon_id, PROPS['expressed in'], "",
-                                                     "UBERON term {} was not found in wikidata".format(uberon_id))
-                        wdi_core.WDItemEngine.log("WARNING", msg)
-        else:
-            # if the item doesn't exist, log it and skip
-            msg = wdi_helpers.format_msg(ens_id, PROPS['expressed in'], "",
-                                         "It does not exist a Wikidata gene (from source Ensembl)" +
-                                         " correspoding to the Ensembl id {} in wikidata".format(ens_id))
-            wdi_core.WDItemEngine.log("WARNING", msg)
-        if len(wikidata_gene_list) and len(wikidata_organ_list):
-            wd_expressed_in_dict = gene_expressed_in_organ_statements(ens_id, wikidata_gene_list, wikidata_organ_list)
-            run_one(wd_expressed_in_dict, login)
+        if count >= START_INDEX and count < total:
+            wikidata_organ_list = []
+            wikidata_gene_list = []
+            if ens_id in ens_wiki_list:
+                wikidata_gene_list = ensembl2wikidata_id_map[ens_id]
+                for uberon_id in uberon_ids:
+                    if uberon_id in uberon_wiki_list:
+                        wikidata_organ_id = uberon2wikidata_id_map[uberon_id]
+                        wikidata_organ_list.append(wikidata_organ_id)
+                        added_statements.write(ens_id + "," + uberon_id + "," + str(wikidata_gene_list) + \
+                                               "," + wikidata_organ_id + "\n")
+                    else:
+                        if uberon_id not in uberon_wiki_list:
+                            # if a corresponding uberon item doesn't exist in wikidata, log it and skip
+                            msg = wdi_helpers.format_msg(uberon_id, PROPS['expressed in'], "",
+                                                         "UBERON term {} was not found in wikidata".format(uberon_id))
+                            wdi_core.WDItemEngine.log("WARNING", msg)
+            else:
+                # if the item doesn't exist, log it and skip
+                msg = wdi_helpers.format_msg(ens_id, PROPS['expressed in'], "",
+                                             "It does not exist a Wikidata gene (from source Ensembl)" +
+                                             " correspoding to the Ensembl id {} in wikidata".format(ens_id))
+                wdi_core.WDItemEngine.log("WARNING", msg)
+            if len(wikidata_gene_list) and len(wikidata_organ_list):
+                wd_expressed_in_dict = gene_expressed_in_organ_statements(ens_id, wikidata_gene_list,
+                                                                          wikidata_organ_list)
+                run_one(wd_expressed_in_dict, login)
+            with open("inserted_statements.csv", "a") as processed_file:
+                processed_file.write(added_statements.getvalue())
+                added_statements.close()
+                added_statements = io.StringIO()
+            if count % 100 == 0 and count > 0:
+                time.sleep(10)
         count = count + 1
         printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
-        with open("inserted_statements.csv", "a") as processed_file:
-            processed_file.write(added_statements.getvalue())
-            added_statements.close()
-            added_statements = io.StringIO()
         with open("count.tmp", "w") as count_file:
-            count_file.write(count)
+            count_file.write(str(count))
+
