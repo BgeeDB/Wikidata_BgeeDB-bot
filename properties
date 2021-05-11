@@ -1,0 +1,18 @@
+URL_WD_UBERON_IDS=https://bgee.org/sparql/?default-graph-uri=&query=%23%23%23%23%23%23%0D%0A%23%23+Wikidata+SPARQL+query+to+get+UBERON+ids.%0D%0A%23%23%23%23%23%23%0D%0APREFIX+wd%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fentity%2F%3E%0D%0APREFIX+wdt%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fdirect%2F%3E%0D%0APREFIX+p%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2F%3E%0D%0APREFIX+pr%3A+%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Freference%2F%3E%0D%0APREFIX+prov%3A+%3Chttp%3A%2F%2Fwww.w3.org%2Fns%2Fprov%23%3E%0D%0A%0D%0ASELECT+DISTINCT+%3Fuberon_id_prefixed%0D%0AWHERE+%0D%0A%7Bservice%3Chttps%3A%2F%2Fquery.wikidata.org%2Fbigdata%2Fnamespace%2Fwdq%2Fsparql%3E%7B%0D%0A++%3Fitem+wdt%3AP1554+%3Fuberon_id.%0D%0A+%7D%0D%0A+BIND%28CONCAT%28STR%28%22UBERON%3A%22%29%2CSTR%28%3Fuberon_id%29%29+as+%3Fuberon_id_prefixed%29+%0D%0A+%7D&should-sponge=&format=text%2Fcsv&timeout=0&debug=on&run=+Run+Query+
+
+#SQL files to load data to a MySQL database
+SQL_DIR =./SQL
+SQL_LOAD_WD_UBERON_IDS =${SQL_DIR}/temp_table_uberon_ids.sql
+SQL_GET_EXPRESSION_CALLS=${SQL_DIR}/get_ordered_is_expressed_in.sql
+
+#Output
+EXPRESSION_CALLS_FILE=./bgee_v14_2_9606_test.csv
+
+#MySQL database access
+USER_MYSQL=
+PASSWD_MYSQL=
+DB_NAME=easybgee_v14_2
+MYSQL_SERVER=localhost
+
+
+
