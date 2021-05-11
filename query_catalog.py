@@ -73,4 +73,20 @@ WHERE
   ?xref pr:P248 ?stated_in_db;
         pr:P594 ?ens_gene_id}
   BIND(STRAFTER(STR(?item),STR(wd:)) as ?wikidata_gene_id) }'''
+WIKIDATA_GET_UBERON_IDS= '''
+######
+## Wikidata SPARQL query to get UBERON ids.
+######
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 
+SELECT DISTINCT ?uberon_id_prefixed
+WHERE 
+{service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
+  ?item wdt:P1554 ?uberon_id.
+ }
+ BIND(CONCAT(STR("UBERON:"),STR(?uberon_id)) as ?uberon_id_prefixed) 
+ }'''
