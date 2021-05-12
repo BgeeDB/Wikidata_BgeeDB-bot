@@ -94,16 +94,15 @@ class InputCSVDataDAO:
                 dict_response[key] = value[0:len(value)]
         return dict_response
 
-    @staticmethod
-    def ask_query(sparql_endpoint: str = None, sparql_query: str = None) -> bool:
-        sparql = SPARQLWrapper(sparql_endpoint)
-        sparql.setQuery(sparql_query)
-        sparql.setReturnFormat(JSON)
-        if sparql.queryType != "ASK":
-            raise ValueError("It is not a ASK query type.", sparql_query)
-        else:
-            results = sparql.query().convert()
-            return results['boolean']
+def ask_query(sparql_endpoint: str = None, sparql_query: str = None) -> bool:
+    sparql = SPARQLWrapper(sparql_endpoint)
+    sparql.setQuery(sparql_query)
+    sparql.setReturnFormat(JSON)
+    if sparql.queryType != "ASK":
+        raise ValueError("It is not a ASK query type.", sparql_query)
+    else:
+        results = sparql.query().convert()
+        return results['boolean']
 
 
 

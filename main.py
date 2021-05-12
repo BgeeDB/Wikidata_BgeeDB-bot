@@ -5,7 +5,7 @@ from datetime import datetime
 from wikidataintegrator import wdi_core, wdi_login, wdi_helpers
 from config import *
 from query_catalog import *
-from input_data_preprocessing import InputCSVDataDAO, np
+from input_data_preprocessing import InputCSVDataDAO, np, ask_query
 import time
 from os import path
 
@@ -249,9 +249,11 @@ def main():
             count_file.write(str(count))
 
 if __name__ == '__main__':
+    #Currently the bot can only update the entries of expressed in statements, if only if,
+    #there is not other data source assining 'expressed in' (P5572) assertions into gene wikidata pages.
     try:
         # TODO consider the case where 'expressed in' statements from other data sources are assigned to wikidata genes
-        if InputCSVDataDAO().ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
+        if ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
             print("The bot cannot be executed, because there are 'expressed in' gene entries "
                   "in Wikidata which are not stated by this bot.")
         else:
