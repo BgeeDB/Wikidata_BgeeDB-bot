@@ -90,3 +90,25 @@ WHERE
  }
  BIND(CONCAT(STR("UBERON:"),STR(?uberon_id)) as ?uberon_id_prefixed) 
  }'''
+
+WIKIDATA_ONLY_BGEE_DATA= '''
+######
+## Wikidata SPARQL query to verify if there is any expressed in statement in wikidata
+## that is not from Bgee database.
+######
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+ASK WHERE  {
+service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
+?gene wdt:P31 wd:Q7187 ; #instance of Gene
+    wdt:P5572 ?anat; #expressed in
+    p:P5572 ?o. #expressed in
+ ?o ps:P5572 ?anat ; #expressed in
+    prov:wasDerivedFrom ?xref. 
+ #?xref pr:P248 ?db. #stated in
+ filter not exists { ?xref pr:P248 wd:Q54985720.} #stated by Bgee DB
+}} '''

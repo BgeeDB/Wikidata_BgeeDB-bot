@@ -106,6 +106,7 @@ def get_ensembl2wikidata_gene_ids(species_item: str = ITEMS['Homo sapiens']) -> 
     return uberon_wiki_id_mapper
 
 
+
 def run_one(wd_expressed_in_statements: dict, login):
     """Insert statements of wikidata_gene_id expressed in wikidata_organ_id along with its reference.
 
@@ -164,35 +165,35 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
         if iteration == total:
             print()
 
-if __name__ == '__main__':
+def main():
     login = wdi_login.WDLogin(WDUSER, WDPASS)
     count = 0
     total = 100
     printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
-    #setup wikidata log
+    # setup wikidata log
     wdi_core.WDItemEngine.setup_logging(header=json.dumps(
         {'name': 'Bgee gene expression', 'timestamp': str(datetime.now()), 'run_id': str(datetime.now())}))
-    #query wikidata to get mapping from uberon ids to wikidata ids
+    # query wikidata to get mapping from uberon ids to wikidata ids
     uberon2wikidata_id_map = get_1to1_uberon_to_wikidata_id_mappings()
     # Load uberon ids to wikidata ids dictionary from a constant variable.
-    #uberon2wikidata_id_map = UBERON2WIKIDATA_ID
-    #Query wikidata to get mappings from Ensembl ids to wikidata ids
+    # uberon2wikidata_id_map = UBERON2WIKIDATA_ID
+    # Query wikidata to get mappings from Ensembl ids to wikidata ids
     ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
-                                                                            WIKIDATA2ENSEMBL_GENE_ID_MAP_QUERY)
-    #Load ensembl ids to wikidata ids dictionary from a CSV file.
-    #ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(csv_file_path='ens2wikidata_ids.csv')
+                                                                           WIKIDATA2ENSEMBL_GENE_ID_MAP_QUERY)
+    # Load ensembl ids to wikidata ids dictionary from a CSV file.
+    # ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(csv_file_path='ens2wikidata_ids.csv')
     ensembl2wikidata_id_map = ensembl2wikidata_pandas.groupby('ens_gene_id').agg(
         {'wikidata_gene_id': lambda x: list(x)}).to_dict()['wikidata_gene_id']
-    #Query Bgee to get gene expression calls
-    #It is limited to ~1.000.000 entries
-    #gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
+    # Query Bgee to get gene expression calls
+    # It is limited to ~1.000.000 entries
+    # gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
     #                                                                       BGEE_EXPRESSION_QUERY_HUMAN_UBERON_PREFIXED,
     #                                                                      column_datatype={'uberon_id': np.str})
-    #Get gene expression cals from a CSV file.
+    # Get gene expression cals from a CSV file.
     gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path=INPUT_BGEE_DATA_TSV,
                                                                           column_datatype={'uberon_id': np.str},
                                                                           separator='\t')
-    #limit by group of 10 the bgee expression calls for each gene
+    # limit by group of 10 the bgee expression calls for each gene
     expressed_in_dict = InputCSVDataDAO.get_limited_results_grouped_by_column_dict(
         gene_expression_file, "gene_id", "uberon_id")
     uberon_wiki_list = uberon2wikidata_id_map.keys()
@@ -207,7 +208,7 @@ if __name__ == '__main__':
             START_INDEX = int(count_file.readline())
         if START_INDEX >= total:
             print("All entries were already processed. To redo it, delete the file count.tmp in the current directory.")
-    #Add bgee expression call statements to wikidata
+    # Add bgee expression call statements to wikidata
     for ens_id, uberon_ids in expressed_in_dict.items():
         if count >= START_INDEX and count < total:
             wikidata_organ_list = []
@@ -246,4 +247,19 @@ if __name__ == '__main__':
         printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
         with open("count.tmp", "w") as count_file:
             count_file.write(str(count))
+
+if __name__ == '__main__':
+    try:
+        # TODO consider the case where 'expressed in' statements from other data sources are assigned to wikidata genes
+        if InputCSVDataDAO().ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
+            print("The bot cannot be executed, because there are 'expressed in' gene entries "
+                  "in Wikidata which are not stated by this bot.")
+        else:
+            main()
+    except ValueError as ve:
+        print(ve.args[0] + str(ve.args[1]))
+    except Exception as e:
+        print(e.args)
+
+
 
