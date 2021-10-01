@@ -2,7 +2,9 @@ from os import PathLike
 from SPARQLWrapper import SPARQLWrapper, CSV, JSON
 import pandas as pd
 from pandas.io.parsers import *
-
+from typing import Union
+from pandas import Series, DataFrame
+import numpy as np
 
 class InputCSVDataDAO:
 
@@ -12,7 +14,7 @@ class InputCSVDataDAO:
     @staticmethod
     def get_results_as_pandas_parser(sparql_endpoint: str = None, sparql_query: str = None,
                                      csv_file_path: PathLike = None, column_datatype: dict = None, separator : str = ','
-                                     ) ->  Union[TextFileReader, Series, DataFrame, None]:
+                                     ) -> Union[TextFileReader, Series, DataFrame, None]:
         """This method convert either a SPARQL query response or a CSV file into a pandas object.
 
         :param sparql_endpoint: the SPARQL endpoint URL. It should support CSV response.

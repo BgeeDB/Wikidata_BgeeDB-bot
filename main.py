@@ -107,17 +107,22 @@ def get_ensembl2wikidata_gene_ids(species_item: str = ITEMS['Homo sapiens']) -> 
 
 
 
-def run_one(wd_expressed_in_statements: dict, login):
+def run_one(wd_expressed_in_statements: dict, login, append_data:boolean = APPEND_DATA):
     """Insert statements of wikidata_gene_id expressed in wikidata_organ_id along with its reference.
 
     :param wd_expressed_in_statements: the Wikidata expressed in statements dictionary where the key is a wikidata gene
-     id and the value is a Wikidata anatomic entity item.
+     id and the value is a list of Wikidata anatomic entity items.
     :param login: the Wikidata login object.
     """
     # create the item object, specifying the qid
     count = 0
     for wikidata_gene_id, organ_statements in wd_expressed_in_statements.items():
-        item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id, fast_run=True,
+        if append_data:
+            item = wdi_core.WDItemEngine(wd_item_id=wikidata_gene_id, search_only=True,
+                                         global_ref_mode='STRICT_KEEP_APPEND')
+            item.update(organ_statements, [PROPS['expressed in']])
+        else:
+            item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id, fast_run=True,
                                  fast_run_base_filter={PROPS['expressed in']: ''})
         wdi_helpers.try_write(item, record_id=wikidata_gene_id+"-"+str(count),
                               record_prop=PROPS['expressed in'],
@@ -131,7 +136,7 @@ def gene_expressed_in_organ_statements(bgee_gene_id: object, wikidata_gene_ids: 
     :param bgee_gene_id: the gene id used in Bgee such as an Ensembl identifier
     :param wikidata_gene_ids: the Wikidata gene identifiers that corresponds to bgee_gene_id
     :param wikidata_organ_ids: the Wikidata anatomic entity items that bgee_gene_id is expressed
-    :return: Wikidata gene id to Wikidata anatomic entity items dictionary, otherwise an empty dictionary
+    :return: a dictionary where key = Wikidata gene id, value = Wikidata anatomic entity items, otherwise an empty dictionary
     """
     reference = create_reference(bgee_gene_id)
     result_dict = {}
@@ -231,7 +236,7 @@ def main():
                 # if the item doesn't exist, log it and skip
                 msg = wdi_helpers.format_msg(ens_id, PROPS['expressed in'], "",
                                              "It does not exist a Wikidata gene (from source Ensembl)" +
-                                             " correspoding to the Ensembl id {} in wikidata".format(ens_id))
+                                             " corresponding to the Ensembl id {} in wikidata".format(ens_id))
                 wdi_core.WDItemEngine.log("WARNING", msg)
             if len(wikidata_gene_list) and len(wikidata_organ_list):
                 wd_expressed_in_dict = gene_expressed_in_organ_statements(ens_id, wikidata_gene_list,
@@ -252,10 +257,12 @@ if __name__ == '__main__':
     #Currently the bot can only update the entries of expressed in statements, if only if,
     #there is not other data source assining 'expressed in' (P5572) assertions into gene wikidata pages.
     try:
-        # TODO consider the case where 'expressed in' statements from other data sources are assigned to wikidata genes
+        # it considers the case where 'expressed in' statements from other data sources are assigned to wikidata genes
         if ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
-            print("The bot cannot be executed, because there are 'expressed in' gene entries "
+            print("The bot cannot be executed in the overwrite mode, because there are 'expressed in' gene entries "
                   "in Wikidata which are not stated by this bot.")
+            print("If you want to execute the bot in an append data mode, please set APPEND_DATA = True"
+                  " in the config.py file and re-run this bot.")
         else:
             main()
     except ValueError as ve:
