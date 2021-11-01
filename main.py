@@ -18,7 +18,8 @@ PROPS = {
     'UBERON ID': 'P1554',
     'Ensembl gene ID': 'P594',
     'found in taxon': 'P703',
-    'instance of': 'P31'
+    'instance of': 'P31',
+    'Cell Ontology ID': 'P7963'
 }
 
 #Existing wikidata individuals considered
@@ -76,6 +77,7 @@ def get_1to1_uberon_to_wikidata_id_mappings(uberon_wiki_id_map: dict = None) -> 
     response = {}
     if uberon_wiki_id_map is None:
         uberon_wiki_id_mapper = wdi_helpers.id_mapper(PROPS['UBERON ID'], return_as_set=True)
+        uberon_wiki_id_mapper.update(wdi_helpers.id_mapper(PROPS['Cell Ontology ID'], return_as_set=True))
         #choose the Wikidata entry with the shortest label when there is a uberon id mapping to several wikidata entries
         uberon_wiki_id_map = {k: list(v) for k, v in uberon_wiki_id_mapper.items() if len(v) > 1}
         uberon_wiki_id_map = get_1to1_uberon_to_wikidata_id_mappings(uberon_wiki_id_map)
