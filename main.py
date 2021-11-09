@@ -19,7 +19,8 @@ PROPS = {
     'Ensembl gene ID': 'P594',
     'found in taxon': 'P703',
     'instance of': 'P31',
-    'Cell Ontology ID': 'P7963'
+    'Cell Ontology ID': 'P7963',
+    'series ordinal': 'P1545'
 }
 
 #Existing wikidata individuals considered
@@ -137,14 +138,19 @@ def gene_expressed_in_organ_statements(bgee_gene_id: object, wikidata_gene_ids: 
 
     :param bgee_gene_id: the gene id used in Bgee such as an Ensembl identifier
     :param wikidata_gene_ids: the Wikidata gene identifiers that corresponds to bgee_gene_id
-    :param wikidata_organ_ids: the Wikidata anatomic entity items that bgee_gene_id is expressed
+    :param wikidata_organ_ids: the ordered Wikidata anatomic entity items that bgee_gene_id is expressed
     :return: a dictionary where key = Wikidata gene id, value = Wikidata anatomic entity items, otherwise an empty dictionary
     """
     reference = create_reference(bgee_gene_id)
+    count_order = 1
     result_dict = {}
     statements = []
     for wikidata_organ_id in wikidata_organ_ids:
-        expressed_in_statement = wdi_core.WDItemID(wikidata_organ_id, PROPS['expressed in'], references=[reference])
+        #we consider that the organs ids are already ordered
+        order = wdi_core.WDString(str(count_order), PROPS['series ordinal'], is_qualifier=True)
+        count_order = count_order + 1
+        expressed_in_statement = wdi_core.WDItemID(wikidata_organ_id, PROPS['expressed in'], references=[reference],
+                                                   qualifiers=[order])
         statements.append(expressed_in_statement)
     for wikidata_gene_id in wikidata_gene_ids:
         result_dict.update({wikidata_gene_id: statements})

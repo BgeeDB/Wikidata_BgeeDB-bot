@@ -66,16 +66,17 @@ PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT ?wikidata_gene_id ?ens_gene_id
 WHERE 
-{service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
+{service<https://query.wikidata.org/sparql>{
   ?item wdt:P703 wd:Q15978631;
         wdt:P31 wd:Q7187;
         p:P594/prov:wasDerivedFrom ?xref.
   ?xref pr:P248 ?stated_in_db;
         pr:P594 ?ens_gene_id}
   BIND(STRAFTER(STR(?item),STR(wd:)) as ?wikidata_gene_id) }'''
+
 WIKIDATA_GET_UBERON_IDS= '''
 ######
-## Wikidata SPARQL query to get UBERON ids.
+## Wikidata SPARQL query to get UBERON ids (including cell IDs).
 ######
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -85,11 +86,15 @@ PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT ?uberon_id_prefixed
 WHERE 
-{service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
-  ?item wdt:P1554 ?uberon_id.
+{
+  {?item wdt:P1554 ?uberon_id.
+   BIND(CONCAT(STR("UBERON:"),STR(?uberon_id)) as ?uberon_id_prefixed) }
+  UNION
+   {
+    ?item wdt:P7963 ?onto_cl_id
+    BIND(REPLACE(STR(?onto_cl_id),"_",":") as ?uberon_id_prefixed) 
  }
- BIND(CONCAT(STR("UBERON:"),STR(?uberon_id)) as ?uberon_id_prefixed) 
- }'''
+}'''
 
 WIKIDATA_ONLY_BGEE_DATA= '''
 ######
@@ -103,29 +108,7 @@ PREFIX pr: <http://www.wikidata.org/prop/reference/>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 ASK WHERE  {
-service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
-?gene wdt:P31 wd:Q7187 ; #instance of Gene
-    wdt:P5572 ?anat; #expressed in
-    p:P5572 ?o. #expressed in
- ?o ps:P5572 ?anat ; #expressed in
-    prov:wasDerivedFrom ?xref. 
- #?xref pr:P248 ?db. #stated in
- filter not exists { ?xref pr:P248 wd:Q54985720.} #stated by Bgee DB
-}} '''
-
-WIKIDATA_ONLY_BGEE_DATA= '''
-######
-## Wikidata SPARQL query to verify if there is any expressed in statement in wikidata
-## that is not from Bgee database.
-######
-PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX p: <http://www.wikidata.org/prop/>
-PREFIX pr: <http://www.wikidata.org/prop/reference/>
-PREFIX ps: <http://www.wikidata.org/prop/statement/>
-PREFIX prov: <http://www.w3.org/ns/prov#>
-ASK WHERE  {
-service<https://query.wikidata.org/bigdata/namespace/wdq/sparql>{
+service<https://query.wikidata.org/sparql>{
 ?gene wdt:P31 wd:Q7187 ; #instance of Gene
     wdt:P5572 ?anat; #expressed in
     p:P5572 ?o. #expressed in

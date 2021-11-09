@@ -3,6 +3,7 @@ URL_WD_UBERON_IDS=https://bgee.org/sparql?default-graph-uri=&query=%23%23%23%23%
 #SQL files to load data to a MySQL database
 SQL_DIR =./SQL
 SQL_LOAD_WD_UBERON_IDS =${SQL_DIR}/temp_table_uberon_ids.sql
+#Query to get ordered expression calls
 SQL_GET_EXPRESSION_CALLS=${SQL_DIR}/get_ordered_is_expressed_in.sql
 
 #Output
