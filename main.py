@@ -267,7 +267,7 @@ if __name__ == '__main__':
     #there is not other data source assining 'expressed in' (P5572) assertions into gene wikidata pages.
     try:
         # it considers the case where 'expressed in' statements from other data sources are assigned to wikidata genes
-        if ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
+        if not APPEND_DATA and ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
             print("The bot cannot be executed in the overwrite mode, because there are 'expressed in' gene entries "
                   "in Wikidata which are not stated by this bot.")
             print("If you want to execute the bot in an append data mode, please set APPEND_DATA = True"
