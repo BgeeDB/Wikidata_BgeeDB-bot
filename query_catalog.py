@@ -1,3 +1,5 @@
+from config import WD_TAXA_SPACE_SEP
+
 BGEE_EXPRESSION_QUERY_HUMAN = '''
 #Bgee SPARQL query to get expression data for human genes and their corresponding anatomical entities
 
@@ -67,12 +69,13 @@ PREFIX prov: <http://www.w3.org/ns/prov#>
 SELECT DISTINCT ?wikidata_gene_id ?ens_gene_id
 WHERE 
 {service<https://query.wikidata.org/sparql>{
-  ?item wdt:P703 wd:Q15978631;
-        wdt:P31 wd:Q7187;
+  VALUES ?taxon {''' + WD_TAXA_SPACE_SEP + '''}
+   ?item wdt:P703  ?taxon ;
+         wdt:P31 wd:Q7187;
         p:P594/prov:wasDerivedFrom ?xref.
   ?xref pr:P248 ?stated_in_db;
         pr:P594 ?ens_gene_id}
-  BIND(STRAFTER(STR(?item),STR(wd:)) as ?wikidata_gene_id) }'''
+  BIND(STRAFTER(STR(?item),STR(wd:)) as ?wikidata_gene_id) } ORDER BY ?ens_gene_id'''
 
 WIKIDATA_GET_UBERON_IDS= '''
 ######

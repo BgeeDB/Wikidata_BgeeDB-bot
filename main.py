@@ -110,7 +110,7 @@ def get_ensembl2wikidata_gene_ids(species_item: str = ITEMS['Homo sapiens']) -> 
 
 
 
-def run_one(wd_expressed_in_statements: dict, login, append_data:boolean = APPEND_DATA):
+def run_one(wd_expressed_in_statements: dict, login, append_data:bool = APPEND_DATA):
     """Insert statements of wikidata_gene_id expressed in wikidata_organ_id along with its reference.
 
     :param wd_expressed_in_statements: the Wikidata expressed in statements dictionary where the key is a wikidata gene
@@ -122,7 +122,7 @@ def run_one(wd_expressed_in_statements: dict, login, append_data:boolean = APPEN
     for wikidata_gene_id, organ_statements in wd_expressed_in_statements.items():
         if append_data:
             item = wdi_core.WDItemEngine(wd_item_id=wikidata_gene_id, search_only=True,
-                                         global_ref_mode='STRICT_KEEP_APPEND')
+                                         global_ref_mode=APPEND_REFERENCE_MODE)
             item.update(organ_statements, [PROPS['expressed in']])
         else:
             item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id, fast_run=True,
@@ -179,6 +179,7 @@ def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=
             print()
 
 def main():
+    start_index = START_GENE_INDEX
     login = wdi_login.WDLogin(WDUSER, WDPASS)
     count = 0
     total = 100
@@ -218,12 +219,12 @@ def main():
     printProgressBar(count, total, prefix='Progress:', suffix='Complete', length=50)
     if path.exists("count.tmp"):
         with open("count.tmp", "r") as count_file:
-            START_INDEX = int(count_file.readline())
-        if START_INDEX >= total:
+            start_index = int(str(count_file.readline()))
+        if start_index >= total:
             print("All entries were already processed. To redo it, delete the file count.tmp in the current directory.")
     # Add bgee expression call statements to wikidata
     for ens_id, uberon_ids in expressed_in_dict.items():
-        if count >= START_INDEX and count < total:
+        if count >= start_index and count < total:
             wikidata_organ_list = []
             wikidata_gene_list = []
             if ens_id in ens_wiki_list:

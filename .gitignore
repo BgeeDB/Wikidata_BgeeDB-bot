@@ -19,3 +19,4 @@ inserted_statements.csv
 *bckp.csv
 *_remove
 test.py
+*.tsv
