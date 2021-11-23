@@ -18,6 +18,7 @@ MYSQL_SERVER=localhost
 
 #The application directory
 APP_DIR = ~/PycharmProjects/BgeeDB-bot
+APP_FILE = $(APP_DIR)/main.py
 
 #python 3.7 or superior version path
 PYTHON= python3.7
