@@ -20,3 +20,5 @@ inserted_statements.csv
 *_remove
 test.py
 *.tsv
+config.py
+properties

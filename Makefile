@@ -1,9 +1,20 @@
 include properties
 SHELL = /bin/bash
+export CONFIG_TEMPLATE
 
 .PHONY: all clean
 
-main: download_wikidata_files sql_execute
+##Run install_pipenv, if pipenv is not installed.
+run_bot: config_file
+	@$(PIPENV) install 1>$@.tmp 2>$@.err
+	@$(PIPENV) run $(PYTHON) $(APP_FILE) 1>> $@.tmp 2>> $@.err
+	@mv $@.tmp $@
+
+config_file:
+	@echo "$$CONFIG_TEMPLATE" > $(APP_DIR)/config.py
+	@touch $@
+
+get_input_expression_data: download_wikidata_files sql_execute
 
 ###### DOWNLOAD  files ##############
 download_wikidata_files: file_wikidata_uberon 
@@ -21,4 +32,8 @@ sql_execute:
 	@rm -f ./wikidata_uberon_ids.csv 1>>$@.tmp 2>>$@.err
 	@mv $@.tmp $@
 	@echo "Ended file generation to Bgee Wikidata bot."
+
+install_pipenv:
+	@curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | $(PYTHON) 1> $@.tmp 2> $@.err
+	@mv $@.tmp $@
 

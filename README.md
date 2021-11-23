@@ -12,7 +12,7 @@ Note that at most 10 "expression in" statements are included per gene page. The 
 are not taken into account because there is no cross-reference to them in the Wikidata anatomic entity entries.
 
 ### Editing configuration file 
-* **INPUT_BGEE_DATA_TSV**: the TSV file path containing the "is expressed in" relations.
+* **INPUT_BGEE_DATA_TSV**: the TSV file path containing the "is expressed in" relations to insert in Wikidata ordered.
   The SQL query [get_ordered_is_expressed_in](get_ordered_is_expressed_in.sql) may be executed over the 
 [EasyBgee](https://bgee.org/?page=download&action=dumps) MySQL database to generate the "is expressed in" relations as
 a TSV file with the following heading:
@@ -26,3 +26,4 @@ mysql -u USER -p easybgee_v14_2 < get_ordered_is_expressed_in.sql > wikidata_bge
 ```
 * **WDUSER**: the wikidata username.
 * **WDPASS**: the wikidata password.
+

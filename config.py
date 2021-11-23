@@ -1,11 +1,21 @@
+#Wikidata user bot
 WDUSER = "BgeeDB-bot"
+#Wikidata password
 WDPASS = ""
+#BGEE sparql endpoint
 BGEE_SPARQL_ENDPOINT = "https://bgee.org/sparql/"
+#The URL prefix of a gene page
 GENE_PAGE_PREFIX = "https://bgee.org/?page=gene&gene_id="
+#Set False, if it should overwrite any expressedIn statement in Wikidata
 APPEND_DATA = False
 #APPEND_REFERENCE_MODE can be: 'STRICT_KEEP' keeps all references as they are, 'STRICT_KEEP_APPEND' keeps the references
 #as they are and appends new ones. 'STRICT_OVERWRITE' overwrites all existing references for given.
 APPEND_REFERENCE_MODE = 'STRICT_OVERWRITE'
+#The TSV file containing the expression data to be added into wikidata with the columns gene_id and uberon_id ordered by
+#descending gene expression score
 INPUT_BGEE_DATA_TSV = "bgee_v14_2.tsv"
+#Species to be considered defined with wikidata ids and separated with spaces
 WD_TAXA_SPACE_SEP = "wd:Q15978631 wd:Q83310"
+#Set 0 if it should start from the first gene in the TSV input file, otherwise set a value greater than zero to start
+#from another gene
 START_GENE_INDEX = 0
