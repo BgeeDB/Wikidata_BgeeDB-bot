@@ -24,8 +24,9 @@ a TSV file with the following heading:
 ```
 gene_id	uberon_id
 ```
-where UBERON ids are defined by removing its prefix `UBERON:` when it exists (e.g. UBERON:0002369 => 0002369) and for
-the other ids that are no prefixed with `UBERON:`, the `:` is replaced with `_` (e.g. CL:0000711 => CL_0000711). 
+where UBERON ids are defined by removing their prefix `UBERON:` when it exists (e.g. UBERON:0002369 => 0002369) and for
+the other ids that are not prefixed with `UBERON:`, the `:` is replaced with `_` such as the following example:
+modified from `CL:0000711` to `CL_0000711`. 
 For example, an `INPUT_BGEE_DATA_TSV` file with two entries is show below.
 ```
 gene_id                 uberon_id
@@ -42,7 +43,7 @@ run first the make command below in the current project directory.
 ```
 make install_pipenv 
 ```
-If pipenv is already installed run the make command below in the current project directory:
+If pipenv is already installed, run the make command below in the current project directory:
 
 ```
 make 
