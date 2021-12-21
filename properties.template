@@ -44,7 +44,7 @@ APPEND_REFERENCE_MODE = 'STRICT_OVERWRITE'
 #descending gene expression score
 INPUT_BGEE_DATA_TSV = "$(EXPRESSION_CALLS_FILE)"
 #Species to be considered defined with wikidata ids and separated with spaces
-WD_TAXA_SPACE_SEP = "wd:Q15978631 wd:Q83310"
+WD_TAXA_SPACE_SEP = "wd:Q15978631 wd:Q83310 wd:Q130888 wd:Q169444 wd:Q91703 wd:Q184224"
 #Set 0 if it should start from the first gene in the TSV input file, otherwise set a value greater than zero to start
 #from another gene
 START_GENE_INDEX = 0
