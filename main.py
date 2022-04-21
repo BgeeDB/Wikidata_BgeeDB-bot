@@ -192,7 +192,7 @@ def main():
     # Load uberon ids to wikidata ids dictionary from a constant variable.
     # uberon2wikidata_id_map = UBERON2WIKIDATA_ID
     # Query wikidata to get mappings from Ensembl ids to wikidata ids
-    ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(BGEE_SPARQL_ENDPOINT,
+    ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(WD_SPARQL_ENDPOINT,
                                                                            WIKIDATA2ENSEMBL_GENE_ID_MAP_QUERY)
     # Load ensembl ids to wikidata ids dictionary from a CSV file.
     # ensembl2wikidata_pandas = InputCSVDataDAO.get_results_as_pandas_parser(csv_file_path='ens2wikidata_ids.csv')
@@ -267,10 +267,13 @@ if __name__ == '__main__':
     #there is not other data source assining 'expressed in' (P5572) assertions into gene wikidata pages.
     try:
         # it considers the case where 'expressed in' statements from other data sources are assigned to wikidata genes
-        if not APPEND_DATA and ask_query(BGEE_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
-            print("The bot cannot be executed in the overwrite mode, because there are 'expressed in' gene entries "
-                  "in Wikidata which are not stated by this bot.")
-            print("If you want to execute the bot in an append data mode, please set APPEND_DATA = True"
+        if not APPEND_DATA and ask_query(WD_SPARQL_ENDPOINT, WIKIDATA_ONLY_BGEE_DATA):
+            if FORCE_RUN:
+                main()
+            else:
+                print("The bot cannot be executed in the overwrite mode, because there are 'expressed in' gene entries "
+                  "in Wikidata which are not stated by this bot. To force the execution, set FORCE_RUN = True.")
+                print("If you want to execute the bot in an append data mode, please set APPEND_DATA = True"
                   " in the config.py file and re-run this bot.")
         else:
             main()

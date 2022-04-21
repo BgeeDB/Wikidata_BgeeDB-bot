@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-wikidataintegrator = "0.8.4"
+wikidataintegrator = "0.9.22"
 sparqlwrapper = "1.8.5"
 pandas = "*"
 
@@ -12,4 +12,4 @@ pandas = "*"
 pylint = "*"
 
 [requires]
-python_version = "3"
+python_version = "3.7"

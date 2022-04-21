@@ -33,10 +33,14 @@ WDUSER = "BgeeDB-bot"
 WDPASS = ""
 #BGEE sparql endpoint
 BGEE_SPARQL_ENDPOINT = "https://bgee.org/sparql/"
+#Wikidata sparql endpoint
+WD_SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
 #The URL prefix of a gene page
 GENE_PAGE_PREFIX = "https://bgee.org/?page=gene&gene_id="
 #Set False, if it should overwrite any expressedIn statement in Wikidata
 APPEND_DATA = False
+#Force overwrite (WARNING: this will permanently remove previous statements)
+FORCE_RUN = False
 #APPEND_REFERENCE_MODE can be: 'STRICT_KEEP' keeps all references as they are, 'STRICT_KEEP_APPEND' keeps the references
 #as they are and appends new ones. 'STRICT_OVERWRITE' overwrites all existing references for given.
 APPEND_REFERENCE_MODE = 'STRICT_OVERWRITE'

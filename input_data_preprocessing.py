@@ -1,9 +1,10 @@
 from os import PathLike
-from SPARQLWrapper import SPARQLWrapper, CSV, JSON
+from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 from pandas.io.parsers import *
 from typing import Union
 from pandas import Series, DataFrame
+from io import StringIO
 import numpy as np
 
 class InputCSVDataDAO:
@@ -26,14 +27,29 @@ class InputCSVDataDAO:
         if sparql_query is not None and sparql_endpoint is not None:
             sparql = SPARQLWrapper(sparql_endpoint)
             sparql.setQuery(sparql_query)
-            sparql.setReturnFormat(CSV)
-            results = sparql.query().response
+            #JSON format is preferable, because not all SPARQL endpoints support well other formats
+            sparql.setReturnFormat(JSON)
+            result_dic = sparql.query().convert()
+            results = StringIO("")
+            header = ""
+            header_list = result_dic['head']['vars']
+            for var in header_list:
+                header = header + "," + var
+            results.write(header[1:] + "\n")
+            for binding in result_dic['results']['bindings']:
+                row = ""
+                for var in header_list:
+                    row = row + "," + str(binding[var]['value'])
+                results.write(row[1:] + "\n")
+            results.seek(0)
         else:
             if csv_file_path is not None:
                 results = csv_file_path
             else:
                 raise ValueError("Values must be set for either sparql-related or file path parameters.")
         csv_result_panda = pd.read_csv(results, sep=separator, low_memory=False, dtype=column_datatype)
+        if isinstance(results, StringIO):
+            results.close()
         return csv_result_panda
 
     @staticmethod
