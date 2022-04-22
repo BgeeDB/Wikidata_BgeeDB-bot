@@ -8,7 +8,7 @@ UBERON ontology are considered (including Cell ontology). This bot inserts to wi
 For example, see the statement "expressed in" at BRAF gene wikidata page: https://www.wikidata.org/wiki/Q17853226.
 
 Note that at most 10 "expression in" statements are included per gene page. The 10 exclusive UBERON anatomic entities 
-(terms prefixed with UBERON: ) where the gene is expressed. 
+(terms prefixed with UBERON and CL) where the gene is expressed. 
 
 ### Editing and generating configuration file
 The [properties.template](properties.template) contains all variables needed to be set up for running this bot. 
