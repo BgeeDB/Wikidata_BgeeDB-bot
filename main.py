@@ -125,8 +125,9 @@ def run_one(wd_expressed_in_statements: dict, login, append_data:bool = APPEND_D
                                          global_ref_mode=APPEND_REFERENCE_MODE)
             item.update(organ_statements, [PROPS['expressed in']])
         else:
-            item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id, fast_run=True,
-                                 fast_run_base_filter={PROPS['expressed in']: ''})
+            #item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id, fast_run=True,
+            # fast_run_base_filter={PROPS['expressed in']: ''})
+            item = wdi_core.WDItemEngine(data=organ_statements, wd_item_id=wikidata_gene_id)
         wdi_helpers.try_write(item, record_id=wikidata_gene_id+"-"+str(count),
                               record_prop=PROPS['expressed in'],
                           login=login, edit_summary="Update gene expression based on the Bgee database")
