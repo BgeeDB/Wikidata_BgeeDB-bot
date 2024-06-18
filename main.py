@@ -206,7 +206,7 @@ def main():
     #                                                                      column_datatype={'uberon_id': np.str})
     # Get gene expression cals from a CSV file.
     gene_expression_file = InputCSVDataDAO().get_results_as_pandas_parser(csv_file_path=INPUT_BGEE_DATA_TSV,
-                                                                          column_datatype={'uberon_id': np.str},
+                                                                          column_datatype={'uberon_id': str},
                                                                           separator='\t')
     # limit by group of 10 the bgee expression calls for each gene
     expressed_in_dict = InputCSVDataDAO.get_limited_results_grouped_by_column_dict(
