@@ -7,8 +7,8 @@ SQL_LOAD_WD_UBERON_IDS =${SQL_DIR}/temp_table_uberon_ids.sql
 #Query to get ordered expression calls
 SQL_GET_EXPRESSION_CALLS=${SQL_DIR}/get_ordered_is_expressed_in.sql
 
-#Output
-EXPRESSION_CALLS_FILE=./bgee_v14_2.tsv
+#Input file
+EXPRESSION_CALLS_FILE=../WikidataBotInput.tsv
 
 #MySQL database access
 USER_MYSQL=
@@ -17,14 +17,14 @@ DB_NAME=easybgee_v14_2
 MYSQL_SERVER=localhost
 
 #The application directory
-APP_DIR = ~/PycharmProjects/BgeeDB-bot
+APP_DIR =.
 APP_FILE = $(APP_DIR)/main.py
 
-#python 3.7 or superior version path
-PYTHON= python3.7
+#python 3.10 or superior version path
+PYTHON= python3
 
 #pipenv path associated to PYTHON (previous variable)
-PIPENV = ~/Library/Python/3.7/bin/pipenv
+PIPENV = ./.local/bin/pipenv
 
 define CONFIG_TEMPLATE
 #Wikidata user bot
