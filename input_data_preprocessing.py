@@ -21,7 +21,7 @@ class InputCSVDataDAO:
         :param sparql_endpoint: the SPARQL endpoint URL. It should support CSV response.
         :param sparql_query: the SPARQL query to be addressed to the SPARQL endpoint
         :param csv_file_path: the file path to load a CSV file
-        :param column_datatype: (optional) explicitly define the CSV column types, e.g. {'uberon_id':np.str}
+        :param column_datatype: (optional) explicitly define the CSV column types, e.g. {'uberon_id': str}
         :return: a panda object
         """
         if sparql_query is not None and sparql_endpoint is not None:
