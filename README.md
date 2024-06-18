@@ -37,7 +37,7 @@ ENSMUSG00000000001	CL_0000711
 For further information about the variables to set, refer to the [properties.template](properties.template). 
 Before executing any make command this file must be renamed from `properties.template` to `properties`.
 
-After editing the `properties` file, if you do not have pipenv installed in your python3.7 (or superior) interpreter, 
+After editing the `properties` file, if you do not have pipenv installed in your python3.10 (or superior) interpreter, 
 run first the make command below in the current project directory.
 
 ```
