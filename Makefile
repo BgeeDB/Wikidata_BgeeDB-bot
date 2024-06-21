@@ -6,8 +6,8 @@ export CONFIG_TEMPLATE
 
 ##Run install_pipenv, if pipenv is not installed.
 run_bot: config_file
-	@$(PIPENV) --python $(PYTHON) install 1>$@.tmp 2>$@.err
-	@$(PIPENV) --python $(PYTHON) run $(PYTHON) $(APP_FILE) 1>> $@.tmp 2>> $@.err
+	@$(PIPENV) install 1>$@.tmp 2>$@.err
+	@$(PIPENV) $(PYTHON) run $(PYTHON) $(APP_FILE) 1>> $@.tmp 2>> $@.err
 	@mv $@.tmp $@
 
 config_file:
